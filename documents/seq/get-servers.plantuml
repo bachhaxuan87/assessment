@@ -1,0 +1,19 @@
+@startuml
+actor       Client
+
+Client -> Controller : GET /servers
+Controller -> Controller: Validate inputs
+Controller -> Service : getServers
+Service --> Service: Filter by priority parameter if applicable
+Service --> Service: Chunk servers
+alt For each chunk
+   par For each item in chunk
+      Service --> ExternalServer: Get data for item
+      ExternalServer --> Service: Response
+   end
+end
+Service --> Service: Filter servers by HTTP response code
+Service --> Controller: Online servers
+Controller --> Client: Result
+
+@enduml
